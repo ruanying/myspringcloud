@@ -3,11 +3,15 @@ package com.atry.springcloud.controller;
 import com.atry.springcloud.entities.CommonResult;
 import com.atry.springcloud.entities.Payment;
 import com.atry.springcloud.service.PaymentService;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -17,6 +21,9 @@ public class PaymentController {
 
     @Value("${server.port}")
     private String serverPort;
+
+    @Resource
+    private DiscoveryClient discoveryClient;
 
     @GetMapping(value = "/get/{id}")
     public CommonResult get(@PathVariable("id") Long id){
@@ -36,5 +43,19 @@ public class PaymentController {
         }else {
             return new CommonResult(444,"插入失败",null);
         }
+    }
+
+    @GetMapping("/port")
+    public Object getPort(){
+        List<String> servicesList = discoveryClient.getServices();
+        servicesList.forEach(i->{
+            log.info("*********i:"+i);
+        });
+
+        List<ServiceInstance> instancesList = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
+        instancesList.forEach(x->{
+            log.info(x.getServiceId()+"\t"+x.getHost()+"\t"+x.getPort()+"\t"+x.getUri());
+        });
+        return instancesList;
     }
 }
