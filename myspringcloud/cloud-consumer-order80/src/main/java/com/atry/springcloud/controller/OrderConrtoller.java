@@ -13,7 +13,8 @@ import javax.annotation.Resource;
 public class OrderConrtoller {
     @Resource
     private RestTemplate restTemplate;
-    private static final String Payment_URL="http://127.0.0.1:8001";
+    //private static final String Payment_URL="http://127.0.0.1:8001";
+    private static final String Payment_URL="http://CLOUD-PAYMENT-SERVICE";
 
     @GetMapping(value = "/getPaymentById/byOrder/{id}")
     public CommonResult getPaymentById(@PathVariable("id") long id){
